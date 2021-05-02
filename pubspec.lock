@@ -50,6 +50,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
+  colorize:
+    dependency: transitive
+    description:
+      name: colorize
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -74,6 +81,20 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  http:
+    dependency: transitive
+    description:
+      name: http
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.13.2"
+  http_parser:
+    dependency: transitive
+    description:
+      name: http_parser
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.0"
   lint:
     dependency: "direct dev"
     description:
@@ -102,6 +123,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.0"
+  pedantic:
+    dependency: transitive
+    description:
+      name: pedantic
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.11.0"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -149,6 +177,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.0"
+  tmdb_api:
+    dependency: "direct main"
+    description:
+      name: tmdb_api
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.7"
   typed_data:
     dependency: transitive
     description:

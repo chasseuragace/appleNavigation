@@ -1,5 +1,5 @@
+import 'package:apple_clone/imdb_api/movies_api.dart';
 import 'package:apple_clone/theme.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'homepage/homepage.dart';
@@ -82,6 +82,8 @@ class Wrapper extends StatelessWidget {
         ),
         MaterialButton(
             onPressed: () {
+              TMDBAPI().fetchMovies("sd", onSuccess: (s) {});
+              return;
               _quickLinks.value = SearchSuggestions(
                   suggestions: ["A new quick ${UniqueKey()}"]
                       .toSuggestion(onTap: (e) {}));
@@ -110,14 +112,15 @@ class Wrapper extends StatelessWidget {
           debugPrint('i am not tappable');
         }));
     //await API call here
-    await Future.delayed(const Duration(seconds: 2));
-    _suggestions.value = SearchSuggestions(
-        suggestions: {
-      'first': 'First result   ${UniqueKey()} $query',
-      'seconds': 'Seconds result ${UniqueKey()}'
-    }.toSuggestion(onTap: (e) {
-      debugPrint(e.id);
-    }));
+    await TMDBAPI().fetchMovies(query, onError: () {
+      _suggestions.value = SearchSuggestions(
+          error: 'Error',
+          suggestions: ['Error getting results..'].toSuggestion(onTap: (e) {}));
+    }, onSuccess: (result) {
+      _suggestions.value = SearchSuggestions(
+          suggestions: <String>[...result!.map((e) => e.title as String)]
+              .toSuggestion(onTap: (el) {}));
+    });
 
     return 0;
   }

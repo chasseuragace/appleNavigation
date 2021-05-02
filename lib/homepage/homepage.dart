@@ -74,14 +74,14 @@ class HomePage extends StatefulWidget {
   final List<Widget>? actions;
   const HomePage(
       {Key? key,
-        required this.tabs,
-        this.onTabChange,
-        required this.suggestionChannel,
-        required this.onQueryUpdate,
-        this.searchInBackground,
-        this.quickLinks,
-        required this.pagecontroller,
-        this.actions})
+      required this.tabs,
+      this.onTabChange,
+      required this.suggestionChannel,
+      required this.onQueryUpdate,
+      this.searchInBackground,
+      this.quickLinks,
+      required this.pagecontroller,
+      this.actions})
       : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late final ValueNotifier<int> currentPageIndexNotifier;
   bool shouldCancelSearch = false;
   final TextEditingController _searchQueryController =
-  TextEditingController(text: '');
+      TextEditingController(text: '');
   @override
   void initState() {
     //only add listener to search query update if user has assigned callback to listen to background search query updates
@@ -166,33 +166,36 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: ValueListenableBuilder<bool>(
           valueListenable: showSearch,
           builder: (_, shouldShowSearch, w) => AnimatedSwitcher(
-            reverseDuration: const Duration(
-              milliseconds: 100,
-            ),
-            duration: const Duration(milliseconds: 400),
-            child: shouldShowSearch
-                ? Material(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(12),
-                bottomRight: Radius.circular(12),
-              ),
-              elevation: 26,
-              child: SizedBox(
-                width: width(context),
-                //height: 250,
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: buildSuggestions(),
+                reverseDuration: const Duration(
+                  milliseconds: 100,
                 ),
-              ),
-            )
-                : SizedBox.shrink(
-              key: UniqueKey(),
-            ),
-          )
+                duration: const Duration(milliseconds: 400),
+                child: shouldShowSearch
+                    ? Material(
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                        ),
+                        elevation: 26,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: width(context),
+                           // minHeight: 250,
+                            maxHeight: 300,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: buildSuggestions(),
+                          ),
+                        ),
+                      )
+                    : SizedBox.shrink(
+                        key: UniqueKey(),
+                      ),
+              )
 
-        //
-      ),
+          //
+          ),
     );
   }
 
@@ -200,20 +203,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return ValueListenableBuilder<bool>(
         valueListenable: showSearch,
         builder: (_, b, w) => AnimatedSwitcher(
-          switchInCurve: Curves.easeOut,
-          reverseDuration: const Duration(
-            milliseconds: 100,
-          ),
-          duration: const Duration(seconds: 2),
-          child: b
-              ? searchWidget()
-              : SizedBox.shrink(
-            key: UniqueKey(),
-          ),
-        )
+              switchInCurve: Curves.easeOut,
+              reverseDuration: const Duration(
+                milliseconds: 100,
+              ),
+              duration: const Duration(seconds: 2),
+              child: b
+                  ? searchWidget()
+                  : SizedBox.shrink(
+                      key: UniqueKey(),
+                    ),
+            )
 
-      //
-    );
+        //
+        );
   }
 
   GestureDetector buildTabsMenuWidget(BuildContext context) {
@@ -236,18 +239,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           children: tabNames.map(_textBuilder).toList().toAnimatedChildren()
             ..add(AnimatedChild(
                 child: GestureDetector(
-                  onTap: () {
-                    _reverse();
-                  },
-                  child: const Icon(
-                    Icons.search,
-                    size: 20,
-                  ),
-                )))
+              onTap: () {
+                _reverse();
+              },
+              child: const Icon(
+                Icons.search,
+                size: 20,
+              ),
+            )))
             ..add(AnimatedChild(
                 child: Row(
-                  children: widget.actions ?? [],
-                ))),
+              children: widget.actions ?? [],
+            ))),
           controller: _controller,
         ),
       ),
@@ -284,66 +287,71 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  Column buildSuggestions() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ValueListenableBuilder<SearchSuggestions>(
-            valueListenable: widget.suggestionChannel,
-            builder: (c, incommingsuggestions, s) {
-              final val = incommingsuggestions.suggestions;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    (val!.isNotEmpty && _searchQueryController.text.isNotEmpty)
-                        ? 'Search result'
-                        : "Quick Links",
-                    style: Theme.of(context)
-                        .textTheme
-                        .caption
-                        ?.copyWith(letterSpacing: 1),
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.only(left: 8.0, top: 18),
-                      child: CustomAnimatedList.column(
-                          useSlide: true,
-                          children: ((val.isNotEmpty &&
+  Widget buildSuggestions() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ValueListenableBuilder<SearchSuggestions>(
+              valueListenable: widget.suggestionChannel,
+              builder: (c, incommingsuggestions, s) {
+                final val = incommingsuggestions.suggestions;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      (val!.isNotEmpty &&
                               _searchQueryController.text.isNotEmpty)
-                              ? val
-                              : widget.quickLinks!.value.suggestions)!
-                              .map((e) => Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: ListTile(
-                                hoverColor: Colors.transparent,
-                                trailing: incommingsuggestions.hasMessage
-                                    ? const SizedBox(
-                                    height: 40,
-                                    child: CircularProgressIndicator())
-                                    : null,
-                                onTap: incommingsuggestions.hasErrors
-                                    ? null
-                                    : () => e.onTap(e),
-                                title: Text(
-                                  '${e.suggestion}',
-                                  style:
-                                  Theme.of(context).textTheme.headline6,
-                                ),
-                              )))
-                              .toList()
-                              .toAnimatedChildren(),
-                          controller: _controllerReversed)),
-                ],
-              );
-            }),
-      ],
+                          ? 'Search result'
+                          : "Quick Links",
+                      style: Theme.of(context)
+                          .textTheme
+                          .caption
+                          ?.copyWith(letterSpacing: 1),
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.only(left: 8.0, top: 18),
+                        child: CustomAnimatedList.column(
+                            useSlide: true,
+                            children: ((val.isNotEmpty &&
+                                        _searchQueryController.text.isNotEmpty)
+                                    ? val
+                                    : widget.quickLinks!.value.suggestions)!
+                                .map((e) => Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: ListTile(
+                                      hoverColor: Colors.transparent,
+                                      trailing: incommingsuggestions.hasMessage
+                                          ? const SizedBox(
+                                              height: 40,
+                                              child:
+                                                  CircularProgressIndicator())
+                                          : null,
+                                      onTap: incommingsuggestions.hasErrors
+                                          ? null
+                                          : () => e.onTap(e),
+                                      title: Text(
+                                        '${e.suggestion}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline6,
+                                      ),
+                                    )))
+                                .toList()
+                                .toAnimatedChildren(),
+                            controller: _controllerReversed)),
+                  ],
+                );
+              }),
+        ],
+      ),
     );
   }
 
 //Sidebar tabs
   Widget _textBuilder(String text) {
     final currentindex =
-    widget.tabs.indexWhere((element) => element.label == text);
+        widget.tabs.indexWhere((element) => element.label == text);
     return TextButton(
       onPressed: () {
         widget.tabs.singleWhere((element) => element.label == text).onTap!();
@@ -364,10 +372,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         style: p != currentindex
                             ? Theme.of(context).primaryTextTheme.subtitle2
                             : Theme.of(context)
-                            .primaryTextTheme
-                            .subtitle2
-                            ?.copyWith(
-                            color: Colors.white.withOpacity(.7))),
+                                .primaryTextTheme
+                                .subtitle2
+                                ?.copyWith(
+                                    color: Colors.white.withOpacity(.7))),
                   ),
                   //bubble
                   AnimatedSwitcher(
@@ -376,9 +384,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
                     child: p == currentindex
                         ? const CircleAvatar(
-                      backgroundColor: Colors.white,
-                      radius: 2,
-                    )
+                            backgroundColor: Colors.white,
+                            radius: 2,
+                          )
                         : const SizedBox.shrink(),
                   )
                 ],
@@ -433,7 +441,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           focusNode: searchFieldFocusNode,
           style: const TextStyle(color: Colors.white, fontSize: 12),
           decoration: const InputDecoration(
-            // contentPadding: const EdgeInsets.all(2),
+              // contentPadding: const EdgeInsets.all(2),
               focusedBorder: InputBorder.none,
               enabledBorder: InputBorder.none,
               errorBorder: InputBorder.none,
@@ -487,25 +495,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
 Widget _makeSlideTween(BuildContext context,
     {required Widget child,
-      required int milliseconds,
-      required Offset initialOffset,
-      Cubic curve = Curves.ease}) {
+    required int milliseconds,
+    required Offset initialOffset,
+    Cubic curve = Curves.ease}) {
   return TweenAnimationBuilder<Offset>(
       curve: curve,
       tween: Tween<Offset>(begin: initialOffset, end: Offset.zero),
       duration: Duration(milliseconds: milliseconds),
       builder: (_, value, child) => Transform.translate(
-        offset: value,
-        child: child,
-      ),
+            offset: value,
+            child: child,
+          ),
       child: child);
 }
 
 Widget _makeScaleTween(
-    BuildContext context, {
-      required Widget child,
-      required int milliseconds,
-    }) {
+  BuildContext context, {
+  required Widget child,
+  required int milliseconds,
+}) {
   return TweenAnimationBuilder<double>(
     curve: Curves.easeInCubic,
     tween: Tween<double>(begin: 0, end: 1),
@@ -553,10 +561,10 @@ class SingleSuggestionItem {
   Null Function(SingleSuggestionItem) onTap;
   SingleSuggestionItem(
       {this.suggestion,
-        this.description,
-        required this.id,
-        this.attributes,
-        required this.onTap});
+      this.description,
+      required this.id,
+      this.attributes,
+      required this.onTap});
 }
 
 extension Helper on List<String> {
@@ -576,7 +584,7 @@ extension Helper2 on Map<String, String> {
       {required Null Function(SingleSuggestionItem) onTap}) {
     return entries
         .map((key) => SingleSuggestionItem(
-        id: key.key, suggestion: key.value, onTap: onTap))
+            id: key.key, suggestion: key.value, onTap: onTap))
         .toList();
   }
 }
