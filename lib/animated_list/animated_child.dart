@@ -120,8 +120,6 @@ class _CustomAnimatedListState extends State<CustomAnimatedList> {
                     child: Opacity(
                         opacity: scaleAnimation.value * .9, child: child),
                   );
-
-            child ?? const SizedBox.shrink();
           },
           child: widget.children[i].child,
         )
@@ -178,7 +176,7 @@ class AnimationInterval {
   const AnimationInterval({this.start = 0.0, this.end = 1.0});
 }
 
-extension animatedChild on List<Widget> {
+extension AnimatedChildMaker on List<Widget> {
   List<AnimatedChild> toAnimatedChildren() {
     return map((e) => AnimatedChild(
           child: e,
